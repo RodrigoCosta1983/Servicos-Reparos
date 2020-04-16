@@ -1,0 +1,57 @@
+﻿function verificaCep(cep) {
+    $("#formInteressado").block({ message: $('#ajaxLoader') });
+    //$("#btnEnviarInteressado").button('loading');
+    
+    $.get("/util/verificacep", "cep=" + cep, function (data) {
+
+    }).success(function (data) {
+    
+        if (data.mensagem == 'OK') {
+            $("#CodigoCidade").val(data.codigoCidade);
+            $("#Endereco").val(data.endereco);
+            $("#Bairro").val(data.bairro);
+            $("#NomeCidade").val(data.nomeCidade);
+            $("#UfCidade").val(data.ufCidade);
+            $("#Lat").val(data.lat);
+            $("#Lon").val(data.lon);
+            console.log('Cadastro ok');
+            fbq('track', 'Lead');
+            if (typeof goog_snippet_vars === 'function') { goog_report_conversion(); }
+
+            $("#formInteressado form").get(0).submit();
+        }
+        else {
+            $("#formInteressado").unblock();
+            //$("#btnEnviarInteressado").button('reset');
+            alert(data.mensagem);
+            $("#Cep").val('');
+            $("#Cep").focus();
+        }
+                
+    }).error(function (err) {
+        alert(err);
+        $("#formInteressado").unblock();
+        //$("#btnEnviarInteressado").button('reset');
+        $("#Cep").val('');
+        $("#Cep").focus();
+    }).done(function () {
+        
+    });
+}
+
+$(document).ready(function () {
+    //$("#Cep").blur(function () {
+    //    if ($(this).val().length > 0) {
+    //        verificaCep($(this).val());
+    //    }
+    //});
+
+    $("#formInteressado form").submit(function (e) {
+        if ($("#Cep").val().length > 0 && $("#formInteressado form").valid())
+        {            
+            verificaCep($("#Cep").val());            
+        }
+        e.preventDefault();
+        return false;
+    });
+});

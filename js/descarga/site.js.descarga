@@ -1,0 +1,156 @@
+﻿new WOW().init();
+
+/*
+ * Localized default methods for the jQuery validation plugin.
+ * Locale: PT_BR
+ */
+jQuery.extend(jQuery.validator.methods, {
+    date: function (value, element) {
+        return this.optional(element) || /^\d\d?\/\d\d?\/\d\d\d?\d?$/.test(value);
+    },
+    number: function (value, element) {
+        return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(value);
+    }
+});
+
+jQuery.extend(jQuery.validator.messages, {
+    required: "Esse campo é obrigatório.",
+    remote: "Esse campo está inválido.",
+    email: "Entre com um e-mail válido.",
+    url: "Entre com uma URL válida.",
+    date: "Entre com um data válida.",
+    dateISO: "Entre com um data válida (ISO).",
+    number: "Entre com um número válido.",
+    digits: "Entre apenas com os dígitos.",
+    creditcard: "Entre com um número válido de cartão.",
+    equalTo: "Entre com o mesmo valor novamente.",
+    accept: "Entre com um valor válido.",
+    maxlength: jQuery.validator.format("Escreva no máximo {0} caracteres."),
+    minlength: jQuery.validator.format("Escreva no mínimo {0} caracteres."),
+    rangelength: jQuery.validator.format("Entre com um valor entre {0} e {1}."),
+    range: jQuery.validator.format("Entre com um valor entre {0} e {1}."),
+    max: jQuery.validator.format("Entre com um valor menor ou igual a {0}."),
+    min: jQuery.validator.format("Entre com um valor maior ou igual a {0}.")
+});
+
+if (jQuery.validator) {
+    // Checkbox Validation
+    jQuery.validator.addMethod("checkrequired", function (value, element, params) {
+        var checked = false;
+        checked = $(element).is(':checked');
+        return checked;
+    }, '');
+    if (jQuery.validator.unobtrusive) {
+        jQuery.validator.unobtrusive.adapters.addBool("checkrequired");
+    }
+}
+
+function BloquearInterface()
+{
+    $.blockUI({ message: $('#ajaxLoader') });
+    $('button[type=submit]').button('loading');
+}
+
+//Eventos globais para travar a tela
+$(document).submit(BloquearInterface);
+//$(document).ajaxSend(BloquearInterface);
+//$(document).ajaxStart(BloquearInterface);
+//$(document).ajaxComplete($.unblockUI);
+//$(document).ajaxError($.unblockUI);
+//$(document).ajaxStop($.unblockUI);
+
+$(document).ready(function () {
+    
+    $.cookie('test_cookie', 'cookie_value', { path: '/' });
+    if ($.cookie('test_cookie') === 'cookie_value') {
+        // cookie worked, set/enable appropriate things
+    }
+    else
+    {
+        $('#verifica-cookies').show();
+    }
+
+    
+    //$('#btnSimuleContrate').click(function () {
+    //    $('#head-element-default').slideUp('slow', function () {
+           
+    //    });
+
+    //    $('#head-element-form').slideDown('slow');
+    //    $('#Nome').focus();
+    //});
+
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 50) {
+            $('#back-to-top').fadeIn();
+        } else {
+            $('#back-to-top').fadeOut();
+        }
+    });
+    // scroll body to 0px on click
+    $('#back-to-top').click(function () {
+        $('#back-to-top').tooltip('hide');
+        $('body,html').animate({
+            scrollTop: 0
+        }, 800);
+        return false;
+    });
+
+    $('.show-tooltip').tooltip();
+    $('#back-to-top').tooltip('show');
+
+    //Mascarando todos campos que tem a palavra Telefone no id      
+
+    $('input[id*="Telefone"]').mask('(99) 9999-9999?9', { placeholder: " " }).on('focusout', function (event) {
+        var target, phone, element;
+        target = event.currentTarget ? event.currentTarget : event.srcElement;
+        phone = target.value.replace(/\D/g, '');
+        element = $(target);
+        var re = new RegExp("^\\d{2,3}(0{8,9}|1{8,9}|2{8,9}|3{8,9}|4{8,9}|5{8,9}|6{8,9}|7{8,9}|8{8,9}|9{8,9})$");
+        if (!phone.match(re)) {
+            element.unmask();
+            if (phone.length > 10) {
+                if (phone.substr(2, 1) !== "9")
+                    element.val("");
+                element.mask("(99) 99999-999?9", { placeholder: " " });
+            } else {
+                element.mask("(99) 9999-9999?9", { placeholder: " " });
+            }
+        }
+        else
+            element.val(null);
+    });
+
+    //Mascarando todos campos que tem a palavra Cep
+    $('input[id*="Cep"]').mask('99999-999');
+
+    //Mascara de CPF ou CNPJ - class criadas dinamicamente pelo code behind
+    //$('.CPF input').mask('999.999.999-**');
+    //$('.CNPJ input').mask('**.***.***/****-**');
+
+    /* Sidebar */
+    $('[data-toggle=collapse]').click(function () {
+        // toggle icon
+        $(this).find("i").toggleClass("glyphicon-chevron-right glyphicon-chevron-down");
+
+    });
+
+    $('.collapse').on('show', function (e) {
+        // hide open menus
+        $('.collapse').each(function () {
+            if ($(this).hasClass('in')) {
+                $(this).collapse('toggle');
+            }
+        });
+
+    });
+    
+});
+
+// GOOGLE LOGIN
+function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    $('#Nome').val(profile.getName());
+    $('#Email').val(profile.getEmail());
+}
+// GOOGLE LOGIN
